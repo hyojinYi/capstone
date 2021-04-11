@@ -5,6 +5,7 @@
 <%@ page import="comment.CommentDAO" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ include file="/header.jsp" %>
+
 <jsp:useBean id="comment" class="comment.Comment" scope="page" />
 <!DOCTYPE html>
 <html>
@@ -20,13 +21,10 @@
 		int pageNumber = 1;
 		if (request.getParameter("pageNumber") != null) {
 			pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
-		}	
-		int commentBoard = 0;
-		if(request.getParameter("bbsID") == null){
 		}
+		int commentBoard = 0;
 		if(request.getParameter("bbsID") != null){
-			commentBoard = Integer.parseInt(request.getParameter("bbsID")); 
-			
+			commentBoard = Integer.parseInt(request.getParameter("bbsID"));
 		}
 	%>
 	<a href="view.jsp?bbsID=<%=commentBoard %>" class="btn btn-success btn-arraw-left">본문보기</a>
@@ -39,7 +37,7 @@
 				<tbody>
 				<%
 					CommentDAO commentDAO = new CommentDAO();
-					ArrayList<Comment> list = commentDAO.getList(pageNumber);
+					ArrayList<Comment> list = commentDAO.getList(pageNumber, commentBoard);
 					for(int i=0; i<list.size(); i++){
 				%>
 					<tr>
@@ -49,18 +47,22 @@
 					<tr>
 						<td colspan="2" style="min-height:20px; text-align:left;"><%= list.get(i).getCommentContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></td>
 					</tr>
-					<%
-						if(userID != null && userID.equals(comment.getUserID())){
-					%>
-					<a href="update.jsp?bbsID=<%=comment.getCommentNum() %>" class="btn btn-primary">수정</a>
-					<%
-						}
-					%>
-				<%
+						<%
+							if(userID != null && userID.equals(list.get(i).getUserID())){
+						%>
+					<tr>
+						<a onclick="return confirm('정말로 삭제하시겠습니까?')" href="deleteCommentAction.jsp?commentNum=<%=list.get(i).getCommentNum() %>" class="btn btn-primary ">삭제</a>
+					</tr>
+						<%
+							}
 					}
-				%>
+						%>
 				</tbody>
 			</table>
+					
+					
+					
+					
 			<%
 				if(pageNumber!= 1){
 			%>
@@ -89,8 +91,10 @@
 					<tr>
 						<td><textarea class="form-control" placeholder="댓글 내용" name="commentContent" maxlength="200" style="height: 100px;"></textarea></td>
 					</tr>
+				
 				</tbody>
 		</table>
+		<input type="hidden" name="hiddenvalue" value=<%=commentBoard %>>
 		<input type="submit" class="btn btn-primary pull-right" value="댓글쓰기">
 		</form>
 		</div>

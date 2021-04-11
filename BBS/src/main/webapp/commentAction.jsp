@@ -17,10 +17,6 @@
 		if(session.getAttribute("userID") != null){
 			userID = (String) session.getAttribute("userID");
 		}
-		int commentBoard = 0;
-		if(session.getAttribute("bbsID") != null){
-			commentBoard = Integer.parseInt(request.getParameter("bbsID")); 
-		}
 		if(userID == null){
 			PrintWriter script = response.getWriter();
 			script.println("<script>");
@@ -36,22 +32,20 @@
 					script.println("</script>");
 			}else{
 				CommentDAO commentDAO = new CommentDAO();
+				int commentBoard = Integer.parseInt(request.getParameter("hiddenvalue"));
 				int result = commentDAO.write(commentBoard, userID, comment.getCommentContent());
 				if(result == -1){
 					PrintWriter script = response.getWriter();
 					script.println("<script>");
 					script.println("alert('댓글쓰기에 실패했습니다.')");
-					script.println("history.back()");//이전(로그인) 페이지로 돌려보냄
+					script.println("history.back()");
 					script.println("</script>");
 				}
 				else{
-					PrintWriter script = response.getWriter();
-					script.println("<script>");
-					script.println("location.href = 'commentViewNWrite.jsp'");
-					script.println("</script>");
-					}
+					response.sendRedirect("commentViewNWrite.jsp?bbsID="+String.valueOf(commentBoard));
 				}
+			}
 		}
-	%>
+		%>
 </body>
 </html>

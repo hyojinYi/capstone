@@ -24,12 +24,6 @@
 			script.println("</script>");
 		}
 		int bbsID = 0;
-		if(request.getParameter("bbsID") == null){
-			PrintWriter script = response.getWriter();
-			script.println("<script>");
-			script.println("alert('널이다 임마.')");
-			script.println("</script>");
-		}
 		if (request.getParameter("bbsID") != null){
 			bbsID = Integer.parseInt(request.getParameter("bbsID"));
 		}
